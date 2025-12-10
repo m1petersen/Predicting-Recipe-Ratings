@@ -57,6 +57,7 @@ The plot above shows the distribution of ratings in relation to the amount of ca
 
 ### Interesting Aggregates:
 --- Average Rating by Calorie Content Quartile ---
+
 | calorie_category     |   count |    mean |   median |      std |
 |:---------------------|--------:|--------:|---------:|---------:|
 | Q1 (Lowest Calorie)  |   20285 | 4.63705 |        5 | 0.638628 |
