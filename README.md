@@ -231,3 +231,150 @@ The low ROC AUC is very informative in this case, A perfect model would score 1.
 Given that our model has a ROC AUC of only 0.519, we know that despite the seemingly high accuracy, it actually has little to no predictive power for distinguishing which recipes will truly be top-rated.
 
 ## Final Model:
+
+For our Final Model, a lot more features were added. This was done expecting better model performance as the model would have more information to use when making decisions. 
+
+A total of 17 features were added to the baseline model, here they are with a small description of *why* these were chosen:
+
+**description_length**: Character count of recipe description. Longer descriptions may indicate more detailed recipes.
+
+**complexity_score**: Computed as: n_steps × log(1 + minutes). Captures recipe difficulty combining time and steps.
+
+**Tag Based Features**: is_dessert, is_healthy, is_easy, is_quick, is_vegetarian, num_tags.
+
+Recipe categories and the number of tags may correlate with ratings. These features were engineered from the original tags variable.
+
+**n_ingredients**: Count of ingredients in recipe, ingredient complexity may affect ratings.
+
+**nutrition features**: calories, total_fat, sugar, sodium, protein, saturated_fat, carbohydrates.
+
+Nutritional content likely affects user satisfaction.
+
+**n_steps**: the number of steps in the recipe, more complex recipes will likely contribute to recipe ratings.
+
+### Modeling Algorithm:
+
+After the chosen features were engineered and prepared for the modeling. We ended up with a total of 18 features.
+
+We then used a Standard Scaler on all the numerical features to ensure all features contribute equally to our models and make sure the scale of the features is not measured into the effect of the feature on the model.
+
+We also used a One Hot Encoder on the categorical features to convert them into a numerical format that our machine learning algorithms can understand.
+
+We then tuned 3 different models and tuned their Hyperparameters using **GriedSearchCV** to compare performance:
+
+#### Logistic Regression:
+##### Hyperparameters tuned:
+**C (regularization strength)**: [0.01, 0.1, 1, 10]
+
+Controls model complexity and prevents overfitting, Lower C = stronger regularization = simpler model.
+
+**class_weight** : ['balanced', None] Addresses class imbalance (75% highly rated), 'balanced' penalizes errors on minority class more.
+
+#### Random Forest:
+##### Hyperparameters tuned:
+**n_estimators (number of trees)**: [50, 100, 200]
+
+More trees = better performance but slower training, Testing moderate values for efficiency
+
+**max_depth (tree depth)**: [5, 10, 15] Controls model complexity and overfitting, Deeper trees capture more patterns but risk overfitting
+
+**min_samples_split**: [5, 10] Minimum samples to split a node, Higher values prevent overfitting on small subsets
+
+**class_weight**: ['balanced', None] Handles class imbalance in tree splitting
+
+#### Gradient Boosting:
+##### Hyperparameters tuned:
+**n_estimators**: [50, 100, 150] Number of boosting stages, More iterations can improve performance but risk overfitting
+
+**learning_rate**: [0.01, 0.1, 0.2] Step size for each tree's contribution, Lower = more conservative, needs more estimators
+
+**max_depth**: [3, 5, 7] Depth of individual trees, Shallower trees work well with boosting
+
+#### Best Final Model: Random Forest.
+The Random Forest Model ended up performing the best with a ROC AUC of **0.5528**. 
+
+#### Final Model Performance:
+  **Features: 18**
+  **Accuracy: 0.5725**
+  **ROC AUC: 0.5528**
+
+##### Improvement over baseline:
+
+  **ROC AUC: +0.0339 (+6.5%)**
+
+  **Accuracy: -0.1782 (-23.7%)**
+
+  **Features: 2 → 18 (+16 features)**
+
+
+The improvement of the model was small but significant, this means that although the ratings are hard to predict with the data that we have, the model was still able to extract some information and improve our ROC AUC from 0.5190 to 0.5528.
+
+The Baseline Model has higher accuracy because it is just predicting that almost everything is highly rated, and since most of our data (around 75%) is highly rated, the accuracy of the baseline model is close to that 75%. While the Random Forest Classification is trying to catch the recipes that are not highly rated and is actually a little better at distinguishing between the two classes (as we can see from the AUC).
+
+The Baseline Model has higher accuracy because it is just predicting that almost everything is highly rated, and since most of our data (around 75%) is highly rated, the accuracy of the baseline model is close to that 75%. While the Random Forest Classification is trying to catch the recipes that are not highly rated and is actually a little better at distinguishing between the two classes (as we can see from the AUC).
+
+Here is a confusion matrix describing the model's performance:
+
+<iframe
+  src="assets/confusion_matrix.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+And a comparison with the baseline model:
+
+<iframe
+  src="assets/comparison_with_baseline.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+## Fairness Analysis:
+
+#### Does our model perform worse for simple recipes than it does for complex recipes?
+This is an important fairness question because:
+
+- Simple recipes (quick, few steps) may appeal to beginners or busy people
+- Complex recipes (longer time, many steps) may appeal to experienced cooks
+- If our model performs worse on simple recipes, it could disadvantage casual cooks when they're trying to find highly-rated recipes
+
+We will define simple recipes as having <= 30 minutes AND <= 8 steps, while complex recipes will have > 30 minutes OR > 8 steps.
+
+#### Hypotheses:
+
+Null Hypothesis (H₀): Our model is fair. Its precision for simple recipes and complex recipes are roughly the same, and any differences are due to random chance.
+
+Alternative Hypothesis (H₁): Our model is unfair. Its precision for simple recipes is different from its precision for complex recipes.
+
+Test Statistic: Difference in precision = Precision(Simple) - Precision(Complex)
+
+Significance Level: α = 0.05
+
+Observed Test Statistic: 0.0146
+
+#### Test Results:
+  Observed difference:     0.0146
+
+  P-value:                 0.1211
+
+  Significance level (α):  0.05
+
+#### Conclusion:
+
+**FAIL TO REJECT** the null hypothesis (p = 0.1201 >= 0.05)
+
+The observed difference is NOT statistically significant, the model appears to be fair across simple and complex recipes.
+
+
+Here is a visualization of how the model performs on simple vs complex recipes:
+
+<iframe
+  src="assets/model_performance_by_complex.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+## Thank You
