@@ -29,14 +29,13 @@ We also did some work on the ratings column. First we replaced values of 0 with 
 
 Here are the first couple of rows and the most important columns our cleaned recipes dataframe:
 
-|   minutes | tags                                                                                                                                                                                                                                                                                               |   n_steps |   n_ingredients |   calories |   total_fat |   average_rating |
-|----------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------:|----------------:|-----------:|------------:|-----------------:|
-|        40 | ['60-minutes-or-less', 'time-to-make', 'course', 'main-ingredient', 'preparation', 'for-large-groups', 'desserts', 'lunch', 'snacks', 'cookies-and-brownies', 'chocolate', 'bar-cookies', 'brownies', 'number-of-servings']                                                                        |        10 |               9 |      138.4 |          10 |                4 |
-|        45 | ['60-minutes-or-less', 'time-to-make', 'cuisine', 'preparation', 'north-american', 'for-large-groups', 'canadian', 'british-columbian', 'number-of-servings']                                                                                                                                      |        12 |              11 |      595.1 |          46 |                5 |
-|        40 | ['60-minutes-or-less', 'time-to-make', 'course', 'main-ingredient', 'preparation', 'side-dishes', 'vegetables', 'easy', 'beginner-cook', 'broccoli']                                                                                                                                               |         6 |               9 |      194.8 |          20 |                5 |
-|       120 | ['time-to-make', 'course', 'cuisine', 'preparation', 'occasion', 'north-american', 'desserts', 'american', 'southern-united-states', 'dinner-party', 'holiday-event', 'cakes', 'dietary', 'christmas', 'thanksgiving', 'low-sodium', 'low-in-something', 'taste-mood', 'sweet', '4-hours-or-less'] |         7 |               7 |      878.3 |          63 |                5 |
-|        90 | ['time-to-make', 'course', 'main-ingredient', 'preparation', 'main-dish', 'potatoes', 'vegetables', '4-hours-or-less', 'meatloaf', 'simply-potatoes2']                                                                                                                                             |        17 |              13 |      267   |          30 |                5 |
-
+|   minutes |   n_steps |   n_ingredients |   calories |   total_fat |   sugar |   carbohydrates |   average_rating |
+|----------:|----------:|----------------:|-----------:|------------:|--------:|----------------:|-----------------:|
+|        40 |        10 |               9 |      138.4 |          10 |      50 |               6 |                4 |
+|        45 |        12 |              11 |      595.1 |          46 |     211 |              26 |                5 |
+|        40 |         6 |               9 |      194.8 |          20 |       6 |               3 |                5 |
+|       120 |         7 |               7 |      878.3 |          63 |     326 |              39 |                5 |
+|        90 |        17 |              13 |      267   |          30 |      12 |               2 |                5 |
 
 ### Univariate Analysis:
 <iframe
@@ -68,6 +67,49 @@ The plot above shows the distribution of ratings in relation to the amount of ca
 
 Here we have grouped the recipes by Calorie Content and averaged the ratings of each group. As we can see, the average rating is almost the same, no matter the amount of calories. These aggregates are not giving us much information due to rating inflation (users rarely take the time to rate a recipe they disliked), the mean of most recipes is close to 5, making mean comparisons less informative.
 
+## Assessment of Missingness:
+
+The average_rating column of our dataset has the most significant missingness, with 2609 missinf values. This column is important for our analysis as that is the column we want to make predictions on. We have to stop and think of why this column is missing so much data.
+
+Is the data Not Missing at Random (NMAR)? 
+I do not believe so, the most likely cause of the missingness is just that users have not interacted with those specific recipes, therefore they don't have any ratings. But one might argue that the missingness of the column is NMAR as people who would write a bad review on a recipe, probably wouldn't even take the time to do so, then the missingness of that rating would depend on the value of the rating itself.
+
+We will now make some tests to verify if the missingness of the column depends on antoher variable:
+
+We ran a permutation test to verufy if the missingness of the average_rating column depended on the minutes column.
+
+Hypothesis: Recipes that take longer might get MORE ratings (people who invest more time may be more motivated to rate)
+
+Null Hypothesis (H₀): The missingness of average_rating does NOT depend on minutes. (The distribution of minutes is the same for recipes with and without ratings.)
+
+Alternative Hypothesis (H₁): The missingness of average_rating DOES depend on minutes.
+
+OBSERVED STATISTICS
+
+Mean minutes (rating missing):  228.72
+Mean minutes (rating present):  111.38
+Absolute difference:            117.34
+
+PERMUTATION TEST RESULTS
+Observed difference:  117.3422
+P-value:              0.0372
+Significance level:   α = 0.05
+
+REJECT the null hypothesis (p = 0.0372 < 0.05)
+The missingness of average_rating DEPENDS on minutes.
+
+Recipes with missing ratings have significantly different prep times.
+
+This suggests MAR (Missing At Random) - the missingness is related to an observable feature (preparation time).
+
+Here is a plot that visualizes our test and the distribution of the minutes column both when average_rating is present and when it is missing.
+
+<iframe
+  src="assets/missingness.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
 
 
 
