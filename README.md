@@ -97,7 +97,7 @@ Mean minutes (rating present):  111.38
 
 Absolute difference:            117.34
 
-PERMUTATION TEST RESULTS
+#### PERMUTATION TEST RESULTS
 
 Observed difference:  117.3422
 
@@ -122,9 +122,107 @@ Here is a plot that visualizes our test and the distribution of the minutes colu
 ></iframe>
 
 
-## 
+## Hypothesis Testing 
+We have 2 main hypothesis that we want to test with our data:
 
+### Hypothesis 1: Convenience vs Success
+We compare the success rate (recipes rated >= 4.5) of the "Quick" recipe category (<30 minutes) against the "Long" recipe category (> 60 minutes).
 
+#### Null Hypothesis: 
+The success rate of quick recipes is equal to the success rate of long recipes.
 
+#### Alternative Hypothesis: 
+The success rate of quick recipes is greater than the success rate of long recipes.
 
+#### Test Statistic and Significance Level:
+Two-sample Z-statistic for Proportions, with a significance level of 0.05.
 
+#### p-value
+p-value = 1.7117854451669185e-12 much smaller than 0.05.
+
+#### Conclusion
+This extremely small p-value provides statistical evidence to ** reject the null hypothesis **.
+
+The data supports the alternate hypothesis, 
+recipes requiring quick preparation (<= 30 minutes) have a significantly higher success rate (>=4.5 stars) 
+than those requiring long preparation (>60 minutes).
+
+### Hypothesis 2: Indulgence vs. Success
+We compare the success rate of the highest calorie quartile (Q4) against the lowest calorie quartile (Q1).
+
+#### Null Hypothesis: 
+The success rate of highest calorie recipes (Q4) is equal to the success rate of lowest calorie recipes (Q1).
+
+#### Alternate Hypothesis:
+The success rate of highest calorie recipes (Q4) is greater than the success rate of lowest calorie recipes (Q1).
+
+#### Test Statistic and Significance Level:
+Two-sample Z-statistic for Proportions, with a significance level of 0.05.
+
+#### p-value
+p-value = 0.9999044824904763, much larger than 0.05.
+
+#### Conclusion
+In this case, since the p-value is large, we ** Fail to Reject the Null Hypothesis **.
+
+There is no statistical evidence to support the claim that the success rate of the highest calorie recipes is greater than the lowest calorie recipes.
+
+## Framing a Prediction Problem
+The goal of this project is to predict whether a newly submitted recipe will be highly rated by users. This prediction is made using only the intrinsic characteristics of the recipe, such as its ingredients, preparation time, and nutritional content, which are known at the moment the recipe is submitted.
+
+#### Prediction Problem Type: Binary Classification.
+
+#### Response Variable: The variable being predicted is is_top_rated.
+This is a binary variable defined as:
+
+1 (Success): If the recipe's average_rating is greater than or equal to 4.5 stars (out of 5).
+
+0 (Failure): If the recipe's average_rating is less than 4.5 stars.
+
+#### Justification for Response Variable:
+While the raw data contains a continuous average_rating, the analytical goal is to identify recipes that are "successful" or "top-performing". Converting the continuous rating into a binary target with a cutoff of 4.5 allows the model to focus specifically on the factors that drive exceptional user satisfaction.
+
+#### Model Evaluation Metric:
+The primary metric used to evaluate the model's performance is the Area Under the Receiver Operating Characteristic Curve (ROC AUC).
+
+#### Justification for ROC AUC:
+Class Imbalance: 
+
+In real-world data science problems, the number of successful (top-rated) recipes is often much smaller than the number of average or low-rated recipes (class imbalance). Accuracy can be misleading in such cases; a model that simply predicts the majority class can still achieve high accuracy. ROC AUC provides a measure of performance that is less sensitive to class imbalance.
+
+#### Information Known at the Time of Prediction:
+To ensure the model is practical for predicting the success of a new recipe ** before ** it is rated by users, the model is only trained on features available at the moment of submission.
+
+The features used are all intrinsic properties of the recipe description and instructions.
+
+The only invalid feature would be the average rating itself, as this is what we are trying to predict and a new recipe would not have a rating.
+
+## Baseline Model:
+For the Baseline Model, we will be trying to predict if a recipe will be highly rated (>=4.5 stars) using the 'is_top_rated' column.
+
+#### Features used:
+minutes (Numerical): The preparation time, which showed statistical significance in the hypothesis test.
+
+time_category (Ordinal): A feature derived from minutes that simplifies the convenience factor into discrete groups.
+
+#### Necessary Encodings:
+The target variable needed to be encoded, we binarized the average_rating data by creating a new column (is_top_rated). 
+This new column contained a 1 if the recipe had 4.5 stars or higher and a 0 otherwise.
+
+The time_categoy variable also needed to be encoded, we separated the minutes variable into 3 categories, 'Quick' if the recipe took <= 30 minutes,
+'Moderate' if it took between 30 and 60 minutes, and 'Long' if it took more than an hour.
+
+#### Model Performance:
+From the results of the baseline model performance:
+
+Accuracy was 0.7507, meaning that the model correctly classified 75.07%of the recipes in the unseen test set.
+
+** BUT ** ROC AUC Score was only 0.5190. The model's ability to distinguish between the positive class (top-rated, 1) and the negative class (not top-rated, 0) is only slightly better than random guessing (AUC = 0.5).
+
+In this case, the seemingly high accuracy is misleading, it is likely due to imbalance in the target variable. Since most recipes are top-rated (i.e., most values are 5), a model that simply predicts 5 stars for everything would still achieve an accuracy close to the proportion of top-rated recipes (likely around 75%).
+
+The low ROC AUC is very informative in this case, A perfect model would score 1.0, and a model that performs no better than random chance scores 0.5.
+
+Given that our model has a ROC AUC of only 0.519, we know that despite the seemingly high accuracy, it actually has little to no predictive power for distinguishing which recipes will truly be top-rated.
+
+## Final Model:
