@@ -13,12 +13,17 @@ With this question we could get a better sense of what users usually prefer in t
 
 The most relevant columns from the dataset and our question are: 
 
-** 'minutes' ** : Minutes to prepare recipe.
-** 'tags' ** : Food.com tags for recipe.
-** 'nutrition' ** : Nutrition information for the recipe, including calories, fat, protein, carbohydrates, sugar, and sodium. 
-** 'n_steps' ** : Number of steps in recipe.
-** 'description' ** : A user provided description of the recipe.
-** 'rating' ** : The rating given to each recipe (Out of 5 stars)
+**'minutes'** : Minutes to prepare recipe.
+
+**'tags'** : Food.com tags for recipe.
+
+**'nutrition'** : Nutrition information for the recipe, including calories, fat, protein, carbohydrates, sugar, and sodium. 
+
+**'n_steps'** : Number of steps in recipe.
+
+**'description'** : A user provided description of the recipe.
+
+**'rating'** : The rating given to each recipe (Out of 5 stars)
 
 ## Data Cleaning: 
 Data is messy, so as with most if not all datasets, we have to perform some cleaning of the data and colmns in order to begin our analysis. 
@@ -141,7 +146,7 @@ Two-sample Z-statistic for Proportions, with a significance level of 0.05.
 p-value = 1.7117854451669185e-12 much smaller than 0.05.
 
 #### Conclusion
-This extremely small p-value provides statistical evidence to ** reject the null hypothesis **.
+This extremely small p-value provides statistical evidence to **reject the null hypothesis**.
 
 The data supports the alternate hypothesis, 
 recipes requiring quick preparation (<= 30 minutes) have a significantly higher success rate (>=4.5 stars) 
@@ -163,7 +168,7 @@ Two-sample Z-statistic for Proportions, with a significance level of 0.05.
 p-value = 0.9999044824904763, much larger than 0.05.
 
 #### Conclusion
-In this case, since the p-value is large, we ** Fail to Reject the Null Hypothesis **.
+In this case, since the p-value is large, we **Fail to Reject the Null Hypothesis**.
 
 There is no statistical evidence to support the claim that the success rate of the highest calorie recipes is greater than the lowest calorie recipes.
 
@@ -191,7 +196,7 @@ Class Imbalance:
 In real-world data science problems, the number of successful (top-rated) recipes is often much smaller than the number of average or low-rated recipes (class imbalance). Accuracy can be misleading in such cases; a model that simply predicts the majority class can still achieve high accuracy. ROC AUC provides a measure of performance that is less sensitive to class imbalance.
 
 #### Information Known at the Time of Prediction:
-To ensure the model is practical for predicting the success of a new recipe ** before ** it is rated by users, the model is only trained on features available at the moment of submission.
+To ensure the model is practical for predicting the success of a new recipe **before** it is rated by users, the model is only trained on features available at the moment of submission.
 
 The features used are all intrinsic properties of the recipe description and instructions.
 
@@ -217,7 +222,7 @@ From the results of the baseline model performance:
 
 Accuracy was 0.7507, meaning that the model correctly classified 75.07%of the recipes in the unseen test set.
 
-** BUT ** ROC AUC Score was only 0.5190. The model's ability to distinguish between the positive class (top-rated, 1) and the negative class (not top-rated, 0) is only slightly better than random guessing (AUC = 0.5).
+**BUT** ROC AUC Score was only 0.5190. The model's ability to distinguish between the positive class (top-rated, 1) and the negative class (not top-rated, 0) is only slightly better than random guessing (AUC = 0.5).
 
 In this case, the seemingly high accuracy is misleading, it is likely due to imbalance in the target variable. Since most recipes are top-rated (i.e., most values are 5), a model that simply predicts 5 stars for everything would still achieve an accuracy close to the proportion of top-rated recipes (likely around 75%).
 
