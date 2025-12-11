@@ -71,10 +71,11 @@ Here we have grouped the recipes by Calorie Content and averaged the ratings of 
 
 The average_rating column of our dataset has the most significant missingness, with 2609 missing values. This column is important for our analysis as that is the column we want to make predictions on. We have to stop and think of why this column is missing so much data.
 
-Is the data Not Missing at Random (NMAR)? 
+### Is the data Not Missing at Random (NMAR)? 
 
 I do not believe so, the most likely cause of the missingness is just that users have not interacted with those specific recipes, therefore they don't have any ratings. But one might argue that the missingness of the column is NMAR as people who would write a bad review on a recipe, probably wouldn't even take the time to do so, then the missingness of that rating would depend on the value of the rating itself.
 
+### Tests
 
 We will now run some tests to verify if the missingness of the column depends on antoher variable:
 
@@ -88,7 +89,7 @@ The missingness of average_rating does NOT depend on minutes. (The distribution 
 Alternative Hypothesis (H₁): 
 The missingness of average_rating DOES depend on minutes.
 
-OBSERVED STATISTICS
+#### OBSERVED STATISTICS
 
 Mean minutes (rating missing):  228.72
 
@@ -104,7 +105,7 @@ P-value:              0.0372
 
 Significance level:   α = 0.05
 
-REJECT the null hypothesis (p = 0.0372 < 0.05)
+#### REJECT the null hypothesis (p = 0.0372 < 0.05)
 The missingness of average_rating DEPENDS on minutes.
 
 Recipes with missing ratings have significantly different prep times.
@@ -119,6 +120,9 @@ Here is a plot that visualizes our test and the distribution of the minutes colu
   height="600"
   frameborder="0"
 ></iframe>
+
+
+## 
 
 
 
