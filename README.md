@@ -6,7 +6,7 @@ In this project we will explore a dataset of recipes.
 
 This dataset has information on 83782 different recipes; within its 13 columns it contains nutrition information, preparation time, number of steps, the text for the steps needed to make the recipe, a description as well as tags for each recipe, and the ratings of the recipe.
 
-The question for this dataset becomes: ** What types of recipes tend to have higher ratings? ** 
+The question for this dataset becomes: **What types of recipes tend to have higher ratings?** 
 What drives ratings more? Are quick and easy recipes with high sugar and fats favored (Convenience and Comfort)? Or are healthy, more laborious recipes preferred (Quality and Effort)?
 
 With this question we could get a better sense of what users usually prefer in their recipes, taking a look at what food components drive recipe ratings (Sugar, Carbs, Fat), if higher calories (Usually in recipes with higher Fat and Sugar content) mean higher ratings, and if simple recipes are preferred over more complex ones.
